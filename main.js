@@ -20,4 +20,4 @@ jeuDuSerpent.initDeplacementDuSerpent()
    /**** BOUTONS INTERACTIVES ****/
 jeuDuSerpent.boutonsInteractives()
 
-console.log('jeu du 🐍');
+
