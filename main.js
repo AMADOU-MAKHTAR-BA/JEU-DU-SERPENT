@@ -15,9 +15,15 @@ jeuDuSerpent.creationSerpent();
 jeuDuSerpent.creationBoutons();
 
 /**"""" DÉPLACEMENT DU SERPENT ""**/
-jeuDuSerpent.initDeplacementDuSerpent()
+jeuDuSerpent.initDeplacementDuSerpent();
 
    /**** BOUTONS INTERACTIVES ****/
-jeuDuSerpent.boutonsInteractives()
+jeuDuSerpent.boutonsInteractives();
 
-.    
+      /******DESSIN DU CŒUR*****/
+jeuDuSerpent.creationCœur();
+
+/******GESTION DU PAUSE ET REPLAY******/ 
+jeuDuSerpent.pauseEtReplay()
+
+    

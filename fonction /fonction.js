@@ -1,6 +1,9 @@
 
-var  divConteneur , cnv , divScore , ctx , deplacerX , deplacerY ,serpentX , serpentY , serpentL , serpentH
 
+
+var  divConteneur , cnv , divScore , ctx , deplacerX , deplacerY ,serpentX , serpentY , serpentL , serpentH , divPause , boutonPause , boutonReplay , imgPause , imgReplay , cœurY , cœurX , pause
+
+pause = false;
 
 
 const couleursSombresVariees = [
@@ -255,45 +258,57 @@ btn4.appendChild(img4);
 },
 
 /**"""" DÉPLACEMENT DU SERPENT ""**/
-initDeplacementDuSerpent: () => {
 
-       /****** HAUT *******/
-       btn1.addEventListener('click' , () => {
-         ctx.clearRect(0 , 0 , cnvWidth, cnvHeight);
-deplacerX = 0;
-deplacerY = -1;
-      serpentY += deplacerY*serpentH
-jeuDuSerpent.creationSerpent();
-       });
-       
-       /****** DROITE *******/
-       btn2.addEventListener('click' , () => {
-         ctx.clearRect(0 , 0 , cnvWidth, cnvHeight);
-deplacerX = 1;
-deplacerY = 0;
-      serpentX += deplacerX*serpentL
-jeuDuSerpent.creationSerpent();
-       });
-       
-       /****** DROITE *******/
-       btn3.addEventListener('click', () => {
-         ctx.clearRect(0, 0, cnvWidth, cnvHeight)
-         deplacerX = -1;
-         deplacerY = 0;
-         serpentX += deplacerX * serpentL;
-         jeuDuSerpent.creationSerpent();
-       });
-       
-    /****** BAS *******/
-       btn4.addEventListener('click', () => {
-         ctx.clearRect(0, 0, cnvWidth, cnvHeight);
-         deplacerX = 0;
-         deplacerY = 1;
-         serpentY += deplacerY * serpentH
-         jeuDuSerpent.creationSerpent();
-       });
+initDeplacementDuSerpent: () => {
+  /****** HAUT *******/
+  btn1.addEventListener('click', () => {
+    if (!pause) {
+      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
+      deplacerX = 0;
+      deplacerY = -1;
+      serpentY += deplacerY * serpentH;
+      jeuDuSerpent.creationSerpent();
+    }
+  });
+
+  /****** DROITE *******/
+  btn2.addEventListener('click', () => {
+    if (!pause) {
+      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
+      deplacerX = 1;
+      deplacerY = 0;
+      serpentX += deplacerX * serpentL;
+      jeuDuSerpent.creationSerpent();
+    }
+  });
+
+  /****** GAUCHE *******/
+  btn3.addEventListener('click', () => {
+    if (!pause) {
+      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
+      deplacerX = -1;
+      deplacerY = 0;
+      serpentX += deplacerX * serpentL;
+      jeuDuSerpent.creationSerpent();
+    }
+  });
+
+  /****** BAS *******/
+  btn4.addEventListener('click', () => {
+    if (!pause) {
+      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
+      deplacerX = 0;
+      deplacerY = 1;
+      serpentY += deplacerY * serpentH;
+      jeuDuSerpent.creationSerpent();
+    }
+  });
+
+  // Double-clic pour activer ou désactiver la pause
+  cnv.addEventListener('dblclick', () => {
+    
+  });
 },
-  
   
    /**** BOUTONS INTERACTIVES ****/
 boutonsInteractives: () => {
@@ -322,4 +337,65 @@ boutonsInteractives: () => {
     bouton.addEventListener('mouseup', () => mettreFondAleatoire2(bouton));
   });
 },
+
+creationCœur : () => {
+  
+  // Générer des positions aléatoires pour le cœur
+cœurX = Math.random() * (cnvWidth - 30) + 15; // Assure que le cœur reste dans les bords du canevas
+cœurY = Math.random() * (cnvHeight - 30) +20; // Assure que le cœur reste dans les bords du canevas
+
+// Couleur du remplissage et largeur des contours
+ctx.fillStyle = '#0000FF';   // Couleur bleue pour le remplissage du cœur
+ctx.strokeStyle = '#FF0000';  // Couleur rouge pour les contours
+ctx.lineWidth = 3;            // Largeur des contours
+
+// Début du tracé du cœur
+ctx.beginPath();
+
+// Position du cœur ajustée avec les coordonnées aléatoires
+ctx.moveTo(cœurX, cœurY); // Position basse du cœur
+
+// Courbe gauche du cœur
+ctx.bezierCurveTo(cœurX - 12.5, cœurY - 10, cœurX - 12.5, cœurY - 20, cœurX, cœurY - 17.5); // Courbe gauche
+
+// Courbe droite du cœur
+ctx.bezierCurveTo(cœurX + 12.5, cœurY - 20, cœurX + 12.5, cœurY - 10, cœurX, cœurY); // Courbe droite
+
+// Remplir le cœur
+ctx.fill();
+
+// Tracer le contour du cœur
+ctx.stroke();
+
+// Dessiner la tige creuse
+ctx.beginPath();
+ctx.moveTo(cœurX, cœurY - 17.5); // Attache au cœur
+
+// Diminuer la taille de la tige sans changer la forme
+ctx.bezierCurveTo(cœurX - 5, cœurY - 18.5, cœurX - 5, cœurY - 30, cœurX, cœurY - 30); // Côté gauche de la tige
+ctx.bezierCurveTo(cœurX + 5, cœurY - 30, cœurX + 5, cœurY - 18.5, cœurX, cœurY - 17.5); // Côté droit de la tige
+
+// Tracer la tige creuse (contour uniquement)
+ctx.stroke();
+
+    
+}, 
+  
+pauseEtReplay : () => {
+ cnv.addEventListener('dblclick' , () => {
+   cnv.classList.toggle('pause')
+   
+   if (cnv.classList.contains('pause')) {
+     pause = true;
+   }
+   else{
+     pause = false;
+   }
+ })
 }
+}
+
+
+
+
+
