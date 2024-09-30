@@ -1,10 +1,15 @@
 
 
 
-var  divConteneur , cnv , divScore , ctx , deplacerX , deplacerY ,serpentX , serpentY , serpentL , serpentH , divPause , boutonPause , boutonReplay , imgPause , imgReplay , cœurY , cœurX , pause
+var  divConteneur , cnv , divScore , ctx , deplacerX , deplacerY ,serpentX , serpentY , serpentL , serpentH , deplacementUnitaire , divPause , boutonPause , boutonReplay , imgPause , imgReplay , cœurY , cœurX , pause , initScore , divScoreFontSize , url1 , audioGagnant , audioPerdant
 
+
+divScoreFontSize = '30px'
+initScore = 68;
 pause = false;
 
+deplacerX = 0;
+deplacerY = 0;
 
 const couleursSombresVariees = [
 "#8B0000", // Dark Red
@@ -49,25 +54,103 @@ var div1 , div2 , div3 , div4 , btn1 , btn2 , btn3 , btn4 , img1 , img2 , img3 ,
 
 
              
-const cnvWidth  = 320;
-const cnvHeight = 370; 
-const cnvBorder = 'dashed 5px white';
+const cnvWidth  = 330;
+const cnvHeight = 374; 
+const cnvBorder = 'double 0px white';
 const divScoreColor = 'white';
-const divConteneurBgColor = 'white';
+const divConteneurBgColor = 'red';
 const divConteneurOpacite = '0.8';
 const cnvBgColor = '#000000';
-const cnvMargin =  '0 0 10px 0';
+const cnvMargin =  '10px 10px 10px 10px';
       deplacerX = 0;
       deplacerY = 0;
     /***PROPRIÉTÉS DU SERPENT***/
- serpentL = 20;
- serpentH = 20;
-      serpentX =Math.round(Math.random()*(cnvWidth - serpentL)); 
-      serpentY =Math.trunc(Math.random()*(cnvHeight - serpentH));
+ serpentL = 22;
+ serpentH = 22;
+ 
+        serpentX =Math.round(Math.random()*(cnvWidth - serpentL)); 
+        serpentY =Math.round(Math.random()*(cnvHeight - serpentH));
+      
+        // Générer des positions aléatoires pour le cœur
+cœurX = Math.random() * (cnvWidth - 30) + 15; // Assure que le cœur reste dans les bords du canevas
+cœurY = Math.random() * (cnvHeight - 30) +20; // Assure que le cœur reste dans les bords du canevas
+
+url1 = '/IMAGES 🐍 SERPENTS /SERPENT1.jpeg';
+
+
 
 export const jeuDuSerpent ={
   
   
+  
+  
+debutDujeu : () => {
+
+
+      /***CRÉATION DU CANVAS***/
+jeuDuSerpent.creationDuCanvas()
+
+
+     /***CRÉATION DU SERPENT***/
+jeuDuSerpent.creationSerpent();
+
+/*****CRÉATION DES BOUTONS****/
+jeuDuSerpent.creationBoutons();
+
+
+/**"""" DÉPLACEMENT DU SERPENT ""**/
+jeuDuSerpent.initDeplacementDuSerpent();
+
+
+   /**** BOUTONS INTERACTIVES ****/
+jeuDuSerpent.boutonsInteractives();
+
+
+/******GESTION DU PAUSE ET REPLAY******/
+jeuDuSerpent.pauseEtReplay()
+
+if ( initScore <= 5 ) {
+  //jeuDuSerpent.pauseEtReplay()
+setInterval(jeuDuSerpent.vraiDeplacementSerpent , 60)
+}
+else if ( initScore <= 10) {
+  //jeuDuSerpent.pauseEtReplay()
+setInterval(jeuDuSerpent.vraiDeplacementSerpent , 50)
+}
+else if ( initScore <= 15) {
+    //jeuDuSerpent.pauseEtReplay()
+    setInterval(jeuDuSerpent.vraiDeplacementSerpent, 45)
+}
+else if ( initScore <= 20) {
+    //jeuDuSerpent.pauseEtReplay()
+    setInterval(jeuDuSerpent.vraiDeplacementSerpent, 40)
+}
+else if ( initScore <= 25) {
+    //jeuDuSerpent.pauseEtReplay()
+    setInterval(jeuDuSerpent.vraiDeplacementSerpent, 35)
+}
+else if (initScore <= 30) {
+  //jeuDuSerpent.pauseEtReplay()
+  setInterval(jeuDuSerpent.vraiDeplacementSerpent, 25)
+}
+else {
+  //jeuDuSerpent.pauseEtReplay()
+  setInterval(jeuDuSerpent.vraiDeplacementSerpent, 20)
+}
+
+
+
+
+   /****** GESTION DES SONS.  ******/
+//jeuDuSerpent.gestionAudio();
+
+
+ /****** GESTION DES COLLISIONS ******/
+//jeuDuSerpent.gestionCollisions();
+
+ },
+  
+
   
      /***CRÉATION DU CANVAS***/
   creationDuCanvas:()=>{
@@ -97,7 +180,8 @@ export const jeuDuSerpent ={
         //DIV SCORE
       divScore = document.createElement('div');
        divScore.style.color = divScoreColor;
-       divScore.innerText ='0';
+       divScore.style.fontSize = divScoreFontSize;
+       divScore.innerText =initScore;
        divScore.style.position='fixed'
        divScore.zIndex= 100 ;
     divConteneur.appendChild(divScore);
@@ -108,10 +192,21 @@ export const jeuDuSerpent ={
     /***CRÉATION DU CONTEXT***/
    ctx = cnv.getContext('2d');
    ctx.fillStyle = '#EE680A';
+   //EFFACER LE SERPENT EN CAS DE DÉPLACEMENTS 
+  ctx.clearRect(0 , 0 , cnvWidth , cnvHeight)
    
    /***CRÉATION DU SERPENT***/
    ctx.fillRect(serpentX , serpentY , serpentL , serpentH);
-   
+   ctx.fill();
+         /******DESSIN DU CŒUR*****/
+jeuDuSerpent.creationCœur();
+
+ /****** GESTION DES COLLISIONS ******/
+jeuDuSerpent.gestionCollisions();
+
+   /****** GESTION DES SONS.  ******/
+jeuDuSerpent.gestionAudio();
+
   },
   
   
@@ -183,7 +278,7 @@ div1.appendChild(btn1);
 
     /****** CRÉATION IMG1 ****/
 img1 = document.createElement('img');
-img1.src = '/IMAGES/haut.png';
+img1.src = '/IMAGES BOUTONS/haut.png';
 btn1.appendChild(img1)
 
 
@@ -205,7 +300,7 @@ div2.appendChild(btn2);
 
 /****** CRÉATION img2 ****/
 img2=document.createElement('img');
-img2.src='/IMAGES/droite.png';
+img2.src='/IMAGES BOUTONS/gauche.png';
 btn2.appendChild(img2);
 
 
@@ -228,7 +323,7 @@ div3.appendChild(btn3);
 
 /****** CRÉATION img3 ****/
 img3=document.createElement('img');
-img3.src='/IMAGES/gauche.png';
+img3.src='/IMAGES BOUTONS/droite.png';
 btn3.appendChild(img3);
 
 
@@ -251,7 +346,7 @@ div4.appendChild(btn4);
 
 /****** CRÉATION img4 ****/
 img4=document.createElement('img');
-img4.src='/IMAGES/bas.png';
+img4.src='/IMAGES BOUTONS/bas.png';
 btn4.appendChild(img4);
 
   
@@ -263,54 +358,78 @@ initDeplacementDuSerpent: () => {
   /****** HAUT *******/
   btn1.addEventListener('click', () => {
     if (!pause) {
-      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
+      
       deplacerX = 0;
-      deplacerY = -1;
-      serpentY += deplacerY * serpentH;
-      jeuDuSerpent.creationSerpent();
+      deplacerY = -0.5 ;
+      
+  jeuDuSerpent.vraiDeplacementSerpent()
+;
+ //   serpentY += deplacerY * serpentH;
+  //  jeuDuSerpent.creationSerpent();
     }
   });
 
   /****** DROITE *******/
   btn2.addEventListener('click', () => {
     if (!pause) {
-      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
-      deplacerX = 1;
+      
+      deplacerX = -0.5 ;
       deplacerY = 0;
-      serpentX += deplacerX * serpentL;
-      jeuDuSerpent.creationSerpent();
+      
+ 
+ jeuDuSerpent.vraiDeplacementSerpent()
+;
+  //    serpentX += deplacerX * serpentL;
+  //  jeuDuSerpent.creationSerpent();
     }
   });
 
   /****** GAUCHE *******/
   btn3.addEventListener('click', () => {
     if (!pause) {
-      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
-      deplacerX = -1;
+      
+      deplacerX = 0.5 ;
       deplacerY = 0;
-      serpentX += deplacerX * serpentL;
-      jeuDuSerpent.creationSerpent();
+      
+ jeuDuSerpent.vraiDeplacementSerpent();
+
+//    serpentX += deplacerX * serpentL;
+   //   jeuDuSerpent.creationSerpent();
     }
   });
 
   /****** BAS *******/
   btn4.addEventListener('click', () => {
     if (!pause) {
-      ctx.clearRect(0, 0, cnvWidth, cnvHeight);
+     
       deplacerX = 0;
-      deplacerY = 1;
-      serpentY += deplacerY * serpentH;
-      jeuDuSerpent.creationSerpent();
+      deplacerY = 0.5;
+   
+jeuDuSerpent.vraiDeplacementSerpent();
+   
+ //   serpentY += deplacerY * serpentH;
+//    jeuDuSerpent.creationSerpent();
     }
   });
 
-  // Double-clic pour activer ou désactiver la pause
-  cnv.addEventListener('dblclick', () => {
-    
-  });
+ 
 },
+
+
+   /**LA LOGIQUE DU DÉPLACEMENT DU SERPENT**/
+   
+  vraiDeplacementSerpent : () =>{
+  if (!pause) {
+  serpentX += deplacerX*serpentL
+  serpentY += deplacerY*serpentH
+    
+  jeuDuSerpent.creationSerpent();
   
-   /**** BOUTONS INTERACTIVES ****/
+  }
+  },
+  
+ 
+ /**** BOUTONS INTERACTIVES ****/
 boutonsInteractives: () => {
  
  
@@ -318,12 +437,12 @@ boutonsInteractives: () => {
  /********.    AU CLICK.      *******/
   function mettreFondAleatoire1(bouton) {
     bouton.style.backgroundColor = couleursSombresVariees[Math.round(Math.random()*couleursSombresVariees.length)]
-   bouton.style.height = '50px';
+   bouton.style.height = '60px';
   }
   /************ APRÈS CLICK **********/
   function mettreFondAleatoire2(bouton) {
     bouton.style.backgroundColor =''; //couleursSombresVariees[Math.round(Math.random()*couleursSombresVariees.length)]
-   bouton.style.height = '35px';
+   bouton.style.height = '40px';
   }
   
   // Sélectionne tous les éléments avec la classe "btn"
@@ -338,16 +457,16 @@ boutonsInteractives: () => {
   });
 },
 
+  /*******.  CRÉATION DU CŒUR. *******/
+  
 creationCœur : () => {
   
-  // Générer des positions aléatoires pour le cœur
-cœurX = Math.random() * (cnvWidth - 30) + 15; // Assure que le cœur reste dans les bords du canevas
-cœurY = Math.random() * (cnvHeight - 30) +20; // Assure que le cœur reste dans les bords du canevas
+
 
 // Couleur du remplissage et largeur des contours
-ctx.fillStyle = '#0000FF';   // Couleur bleue pour le remplissage du cœur
-ctx.strokeStyle = '#FF0000';  // Couleur rouge pour les contours
-ctx.lineWidth = 3;            // Largeur des contours
+ctx.fillStyle = '#00FF1E';   // Couleur bleue pour le remplissage du cœur
+ctx.strokeStyle = 'white';  // Couleur rouge pour les contours
+ctx.lineWidth = 2;            // Largeur des contours
 
 // Début du tracé du cœur
 ctx.beginPath();
@@ -380,6 +499,9 @@ ctx.stroke();
 
     
 }, 
+
+/***GESTION DE LA  PAUSE ET DU REPLAY**/
+  
   
 pauseEtReplay : () => {
  cnv.addEventListener('dblclick' , () => {
@@ -392,7 +514,36 @@ pauseEtReplay : () => {
      pause = false;
    }
  })
-}
+},
+
+   /****** GESTION DES SONS.  ******/
+gestionAudio : () =>{
+  
+  //AUDIO GAGNANT 
+  audioGagnant = document.createElement('audio')
+  audioGagnant.src = '/sons/sonScore.mp3'
+  
+   //AUDIO PERDANT 
+  audioPerdant = document.createElement('audio')
+  audioPerdant.src = '/sons/sonChoc.mp3'
+   
+},
+
+ /****** GESTION DES COLLISIONS ******/
+gestionCollisions : () => {
+  if ((serpentX < - 5 || serpentX > (cnvWidth - serpentL)) ||(serpentY < - 3 || serpentY > (cnvHeight - serpentH + 5))) {
+    jeuDuSerpent.gestionAudio();
+    audioPerdant.play();
+    
+ /*****ANNULATION DES DÉPLACEMENTS*****/
+ deplacerX = 0 ;
+ deplacerY = 0 ;
+ 
+ 
+ 
+  }
+},
+
 }
 
 
